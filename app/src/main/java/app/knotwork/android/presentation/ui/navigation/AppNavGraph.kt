@@ -284,6 +284,11 @@ fun AppNavGraph(
                     nullable = true
                     defaultValue = null
                 },
+                navArgument(NavRoutes.MCP_SERVER_CONFIG_PRESET_ARG) {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                },
             ),
         ) {
             McpServerConfigScreen(
@@ -561,6 +566,7 @@ private fun ToolsRoute(navController: NavHostController) {
         modifier = Modifier.fillMaxSize(),
         onBack = { navController.popBackStack() },
         onAddMcpServer = { navController.navigate(NavRoutes.MCP_SERVER_CONFIG_ADD) },
+        onAddGitHubMcpServer = { navController.navigate(NavRoutes.MCP_SERVER_CONFIG_GITHUB) },
         onEditMcpServer = { originalUrl ->
             navController.navigate(NavRoutes.mcpServerConfigEditRoute(originalUrl = originalUrl))
         },

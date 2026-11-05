@@ -235,6 +235,7 @@ class ToolsCallbacks(
     val onMcpToolToggle: (toolId: String, enabled: Boolean) -> Unit = { _, _ -> },
     val onMcpToolClick: (toolId: String) -> Unit = {},
     val onAddServerOpen: () -> Unit = {},
+    val onAddGitHubServerOpen: () -> Unit = {},
     val onOpenAllowedDomains: () -> Unit = {},
     val onErrorRetry: () -> Unit = {},
     /**

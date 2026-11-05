@@ -39,6 +39,7 @@ fun ToolsScreen(
     onBack: () -> Unit = {},
     onOpenToolDetail: (String) -> Unit = {},
     onAddMcpServer: () -> Unit = {},
+    onAddGitHubMcpServer: () -> Unit = {},
     onEditMcpServer: (originalUrl: String) -> Unit = {},
     onOpenAllowedDomains: () -> Unit = {},
 ) {
@@ -111,6 +112,7 @@ fun ToolsScreen(
         onMcpToolToggle = { id, enabled -> viewModel.toggleMcpTool(toolId = id, isEnabled = enabled) },
         onMcpToolClick = onOpenToolDetail,
         onAddServerOpen = onAddMcpServer,
+        onAddGitHubServerOpen = onAddGitHubMcpServer,
         onOpenAllowedDomains = onOpenAllowedDomains,
         onErrorRetry = { /* unreachable: discovery errors surface per-server, not as a top-level state. */ },
         onOpenDocumentation = { openDocumentation(context, DocumentationLinks.ID_MCP_SETUP) },

@@ -394,6 +394,8 @@
          lives inside the empty MCP group and disappears once a server exists. -->
     <string name="knotwork_tools_docs_cd">Read about MCP servers</string>
     <string name="knotwork_tools_add_mcp_cd">Add an MCP server</string>
+    <string name="knotwork_tools_add_mcp_menu">Add an MCP server</string>
+    <string name="knotwork_tools_connect_github">Connect GitHub</string>
     <string name="knotwork_tools_empty_mcp_title">No servers yet</string>
     <string name="knotwork_tools_empty_mcp_body">An MCP server adds tools the agent can call — web search, files, shell.</string>
     <string name="knotwork_tools_empty_mcp_cta">Add server</string>

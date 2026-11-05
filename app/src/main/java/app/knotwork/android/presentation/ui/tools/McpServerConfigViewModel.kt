@@ -72,8 +72,23 @@ class McpServerConfigViewModel @Inject constructor(
         .get<String>(EXTRA_ORIGINAL_URL)
         ?.takeIf { it.isNotBlank() }
 
+    /**
+     * Optional add-form preset. It supplies public connection metadata only;
+     * credentials are deliberately entered by the user and never placed in a route.
+     */
+    private val preset: String? = savedStateHandle.get<String>(EXTRA_PRESET)
+
     private val _form = MutableStateFlow(
-        AddMcpServerForm(editingUrl = originalUrl),
+        if (originalUrl == null && preset == PRESET_GITHUB) {
+            AddMcpServerForm(
+                url = GITHUB_MCP_URL,
+                name = "GitHub",
+                transport = McpTransportOption.StreamableHttp,
+                authType = McpAuthSelector.BEARER,
+            )
+        } else {
+            AddMcpServerForm(editingUrl = originalUrl)
+        },
     )
     val form: StateFlow<AddMcpServerForm> = _form.asStateFlow()
 
@@ -277,6 +292,12 @@ class McpServerConfigViewModel @Inject constructor(
     companion object {
         /** Nav-argument key — must match `NavRoutes.MCP_SERVER_CONFIG_URL_ARG`. */
         const val EXTRA_ORIGINAL_URL: String = "originalUrl"
+
+        /** Nav-argument key for a prefilled add-server configuration. */
+        const val EXTRA_PRESET: String = "preset"
+
+        private const val PRESET_GITHUB = "github"
+        private const val GITHUB_MCP_URL = "https://api.githubcopilot.com/mcp/"
 
         private const val URL_REQUIRED_MESSAGE = "Enter a server URL."
         private const val URL_SCHEME_REQUIRED_MESSAGE =

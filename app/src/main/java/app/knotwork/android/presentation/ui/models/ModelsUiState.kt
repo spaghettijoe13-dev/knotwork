@@ -22,6 +22,10 @@ import app.knotwork.android.domain.usecases.BenchmarkRunPhase
 data class ModelsUiState(
     val availablePresets: List<ModelPreset> = listOf(
         ModelPreset(
+            "Qwen3-0.6B INT4 · compact coding model",
+            "https://huggingface.co/litert-community/Qwen3-0.6B-int4/resolve/main/qwen3_0.6b_q4_block32_ekv1280.litertlm",
+        ),
+        ModelPreset(
             "Gemma-4-E4B-it",
             "https://huggingface.co/litert-community/gemma-4-E4B-it-litert-lm/resolve/main/gemma-4-E4B-it.litertlm",
         ),

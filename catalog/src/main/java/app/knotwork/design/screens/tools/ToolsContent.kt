@@ -153,6 +153,7 @@ fun ToolsContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ToolsTopBar(state: ToolsViewState, callbacks: ToolsCallbacks) {
+    var addMenuOpen by remember { mutableStateOf(false) }
     TopAppBar(
         title = {
             Column {
@@ -193,12 +194,33 @@ private fun ToolsTopBar(state: ToolsViewState, callbacks: ToolsCallbacks) {
                     tint = MaterialTheme.colorScheme.onSurface,
                 )
             }
-            IconButton(onClick = callbacks.onAddServerOpen) {
-                Icon(
-                    imageVector = AppIcons.Add,
-                    contentDescription = stringResource(R.string.knotwork_tools_add_mcp_cd),
-                    tint = MaterialTheme.colorScheme.primary,
-                )
+            Box {
+                IconButton(onClick = { addMenuOpen = true }) {
+                    Icon(
+                        imageVector = AppIcons.Add,
+                        contentDescription = stringResource(R.string.knotwork_tools_add_mcp_cd),
+                        tint = MaterialTheme.colorScheme.primary,
+                    )
+                }
+                DropdownMenu(
+                    expanded = addMenuOpen,
+                    onDismissRequest = { addMenuOpen = false },
+                ) {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.knotwork_tools_add_mcp_menu)) },
+                        onClick = {
+                            addMenuOpen = false
+                            callbacks.onAddServerOpen()
+                        },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.knotwork_tools_connect_github)) },
+                        onClick = {
+                            addMenuOpen = false
+                            callbacks.onAddGitHubServerOpen()
+                        },
+                    )
+                }
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(

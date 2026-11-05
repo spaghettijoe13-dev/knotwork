@@ -26,6 +26,7 @@ see [`docs/user-guide.md`](user-guide.md).
 7. [Use input atoms and chip atoms](#7-use-input-atoms-and-chip-atoms)
 8. [Synchronization table — "if you change X, also touch Y"](#8-synchronization-table)
 9. [Quality gate](#9-quality-gate)
+10. [On-device coding and GitHub workflow](#10-on-device-coding-and-github-workflow)
 
 > Extending the agent is not the same job as *using* it. For what each
 > node type does, what it does with its input, and recipes that wire them
@@ -1623,6 +1624,77 @@ exclusion are documented in
 lives in [`docs/static-analysis.md`](static-analysis.md).
 
 ---
+
+## 10. On-device coding and GitHub workflow
+
+Knotwork already has workspace tools for listing, finding, reading, writing,
+editing and appending project files. These tools use the workspace boundary
+and the app's existing risk/approval rules; do not replace them with
+unrestricted file access.
+
+### 10.1. A small local model for a 4 GB Android device
+
+The Models screen includes **Qwen3-0.6B INT4 (LiteRT-LM)** as a compact
+download option. It is a public Apache-2.0 model in LiteRT-LM format and works
+with the project's existing LiteRT-LM 0.17.1 dependency (the model card
+requires runtime 0.16 or newer). The weights are about 332 MiB. Its published
+CPU measurement is roughly 1 GB peak process memory on a newer reference
+phone; that is not a measurement on every Android device. Start with the CPU
+backend on a low-memory tablet, close other heavy apps before downloading or
+running it, and test before making it the everyday model.
+
+This is a small general instruction model, not a specialist code model. It has
+a 1,280-token KV context setting, so it is suited to short, focused edits and
+small files—not huge repositories or multi-file refactors in one prompt. A
+larger Qwen3.5 LiteRT export requires a newer runtime than the dependency
+currently pinned here. The specialist Qwen2.5-Coder GGUF option requires a
+separate llama.cpp-class engine and a much larger memory budget, so it is not
+bundled as a first choice. Users can still supply another compatible .litertlm
+file through the existing Custom URL model path.
+
+### 10.2. Use the coding prompt
+
+Open a pipeline's on-device **LITE_RT** node, open its Prompt Library, and
+select **Coding assistant**. The prompt tells the model to inspect project
+files first, make small changes, re-read edits, and report tests honestly.
+It does not bypass tool approval, grant shell access, or make the small model
+equivalent to a full desktop coding model. Keep requests narrow and include
+only the files relevant to the task.
+
+### 10.3. Connect GitHub
+
+From **Tools**, open the plus menu and choose **Connect GitHub**. The form is
+prefilled with GitHub's hosted MCP endpoint:
+
+    https://api.githubcopilot.com/mcp/
+
+Select **Bearer token** and enter a GitHub access token in the app's token
+field. The token is separate from any AI-model API key. Create a fine-grained
+token for the correct account owner and grant only what the intended actions
+need: repository creation if the app is to create repositories, Contents
+read/write for source files, Actions read/write for build runs, and Workflows
+write only if it must add or change workflow files. Keep an expiration date.
+Never put the token in a prompt, source file, issue, commit, screenshot, or
+ChatGPT message. The app stores MCP credentials using its protected settings
+path; do not log them.
+
+GitHub is an online service: repository contents and requested GitHub
+operations are sent to GitHub when its MCP tools are used. Local model
+inference can remain on-device, but GitHub operations are not offline.
+
+### 10.4. Build and retrieve a test APK
+
+A push to the coding-agent-phase1 branch runs **Coding Build**. The workflow
+runs the FOSS debug unit tests, assembles the FOSS debug APK on a GitHub-hosted
+runner, and uploads the APK as a seven-day Actions artifact. Open the run in
+the repository's **Actions** tab and download the artifact named
+knotwork-foss-debug-<commit>. This is a debug build for device testing, not
+a signed Play Store release.
+
+Public repositories can use GitHub Actions without consuming the private
+repository minute allotment. GitHub may require the account owner to approve
+the first workflow run for a newly forked repository. The workflow never
+requires a model-provider API key, and it does not build the app on the tablet.
 
 ## Further reading
 

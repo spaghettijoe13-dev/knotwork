@@ -93,13 +93,20 @@ object NavRoutes {
      * `originalUrl` is an optional query argument: absent ⇒ Add new
      * server; non-empty ⇒ Edit the server with that URL.
      */
-    const val MCP_SERVER_CONFIG: String = "tools/mcp-config?originalUrl={originalUrl}"
+    const val MCP_SERVER_CONFIG: String =
+        "tools/mcp-config?originalUrl={originalUrl}&preset={preset}"
 
     /** Query-argument key for [MCP_SERVER_CONFIG]. */
     const val MCP_SERVER_CONFIG_URL_ARG: String = "originalUrl"
 
-    /** Route for Add mode (no `originalUrl` query argument). */
+    /** Query-argument key for a prefilled add-server configuration. */
+    const val MCP_SERVER_CONFIG_PRESET_ARG: String = "preset"
+
+    /** Route for Add mode (no query arguments). */
     const val MCP_SERVER_CONFIG_ADD: String = "tools/mcp-config"
+
+    /** Opens GitHub MCP setup with public connection fields prefilled. */
+    const val MCP_SERVER_CONFIG_GITHUB: String = "tools/mcp-config?preset=github"
 
     /** Builds the route for Edit mode against [originalUrl]. */
     fun mcpServerConfigEditRoute(originalUrl: String): String =

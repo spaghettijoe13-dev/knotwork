@@ -1,0 +1,55 @@
+name: Coding Build
+
+# Branch build that produces an installable FOSS debug APK.
+# This is separate from the release-signing workflow.
+on:
+  push:
+    branches:
+      - coding-agent-phase1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: coding-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: FOSS debug APK + unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
+        with:
+          packages: 'platform-tools'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+
+      - name: Run FOSS debug unit tests and assemble APK
+        run: >-
+          ./gradlew
+          :app:testFossDebugUnitTest
+          :app:assembleFossDebug
+          --stacktrace
+          --no-daemon
+
+      - name: Upload installable debug APK
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: knotwork-foss-debug-${{ github.sha }}
+          path: app/build/outputs/apk/foss/debug/*.apk
+          if-no-files-found: error
+          retention-days: 7

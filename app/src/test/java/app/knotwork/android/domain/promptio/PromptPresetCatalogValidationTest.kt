@@ -44,6 +44,7 @@ class PromptPresetCatalogValidationTest {
      * tight prevents accidental deletions sliding into a release.
      */
     private val expectedFileNames: Set<String> = setOf(
+        "coding_assistant.json",
         "litert_concise_assistant.json",
         "litert_step_by_step_reasoner.json",
         "litert_memory_aware_reply.json",

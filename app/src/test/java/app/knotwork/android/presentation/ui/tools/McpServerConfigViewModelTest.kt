@@ -58,10 +58,14 @@ class McpServerConfigViewModelTest {
 
     private fun vm(
         originalUrl: String? = null,
+        preset: String? = null,
         checker: McpConnectionChecker = mockk(relaxed = true),
     ): McpServerConfigViewModel = McpServerConfigViewModel(
         savedStateHandle = SavedStateHandle(
-            if (originalUrl != null) mapOf(McpServerConfigViewModel.EXTRA_ORIGINAL_URL to originalUrl) else emptyMap(),
+            buildMap {
+                if (originalUrl != null) put(McpServerConfigViewModel.EXTRA_ORIGINAL_URL, originalUrl)
+                if (preset != null) put(McpServerConfigViewModel.EXTRA_PRESET, preset)
+            },
         ),
         toolSettings = settings,
         networkSettings = settings,
@@ -78,6 +82,20 @@ class McpServerConfigViewModelTest {
         assertEquals("", form.url)
         assertNull(form.editingUrl)
         assertTrue(form.headers.isEmpty())
+    }
+
+    @Test
+    fun `GitHub preset pre-fills secure Streamable HTTP setup without a credential`() = runTest {
+        val viewModel = vm(preset = "github")
+        advanceUntilIdle()
+
+        val form = viewModel.form.value
+        assertEquals("https://api.githubcopilot.com/mcp/", form.url)
+        assertEquals("GitHub", form.name)
+        assertEquals(McpTransportOption.StreamableHttp, form.transport)
+        assertEquals(McpAuthSelector.BEARER, form.authType)
+        assertEquals("", form.bearerToken)
+        assertNull(form.editingUrl)
     }
 
     @Test
