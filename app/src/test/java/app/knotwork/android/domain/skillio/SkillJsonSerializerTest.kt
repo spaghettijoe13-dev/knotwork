@@ -7,6 +7,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.io.File
 
 /**
  * Round-trip and edge-case contract for [SkillJsonSerializer]. The
@@ -32,6 +33,34 @@ class SkillJsonSerializerTest {
         createdAt = 1_000L,
         updatedAt = 2_000L,
     )
+
+    @Test
+    fun `bundled coding skill uses a narrow project-file tool allowlist`() {
+        val asset = File("src/main/assets/presets/skills/coding_assistant.json")
+        assertTrue("Bundled coding skill asset should exist", asset.isFile)
+
+        val outcome = SkillJsonSerializer.parse(asset.readText(), isBundled = true)
+        assertTrue("Expected a valid bundled skill but got $outcome", outcome is SkillImportOutcome.Success)
+        val skill = (outcome as SkillImportOutcome.Success).skill
+
+        assertEquals("coding_assistant", skill.id)
+        assertEquals("Coding assistant", skill.name)
+        assertEquals(
+            listOf("list_files", "find_files", "read_file", "write_file", "edit_file", "append_file"),
+            skill.toolAllowlist,
+        )
+        assertEquals(
+            NodeContextConfig(
+                chatHistory = false,
+                originalTask = true,
+                nodeInput = true,
+                longTermMemory = false,
+                toolResults = true,
+            ),
+            skill.contextConfig,
+        )
+        assertTrue(skill.isBundled)
+    }
 
     @Test
     fun `given a subset allowlist when round-tripped then it is preserved`() {

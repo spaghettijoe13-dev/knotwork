@@ -1652,14 +1652,24 @@ separate llama.cpp-class engine and a much larger memory budget, so it is not
 bundled as a first choice. Users can still supply another compatible .litertlm
 file through the existing Custom URL model path.
 
-### 10.2. Use the coding prompt
+### 10.2. Use the coding skill
 
-Open a pipeline's on-device **LITE_RT** node, open its Prompt Library, and
-select **Coding assistant**. The prompt tells the model to inspect project
-files first, make small changes, re-read edits, and report tests honestly.
-It does not bypass tool approval, grant shell access, or make the small model
-equivalent to a full desktop coding model. Keep requests narrow and include
-only the files relevant to the task.
+Open **More → Skills** and select the bundled **Coding assistant** skill.
+It is read-only until duplicated, like the other bundled skills. Add a
+**SKILL** node to a pipeline and select this skill. Its enforced allowlist is
+limited to list_files, find_files, read_file, write_file, edit_file and
+append_file; it deliberately excludes delete_file and arbitrary HTTP requests.
+The existing workspace boundary and risk/approval gate still apply to edits.
+
+The coding prompt is also available in the Prompt Library for an ordinary
+LITE_RT node. Use the SKILL node when you want the narrower, executor-enforced
+tool allowlist. The prompt and skill do not grant shell access or make the
+small model equivalent to a full desktop coding model. Keep requests focused
+and provide only the relevant files.
+
+The bundled coding skill is intentionally local-only. GitHub MCP actions have
+their own permissions and should be used from a GitHub-enabled agent context,
+not by widening this local skill to every remote tool.
 
 ### 10.3. Connect GitHub
 
